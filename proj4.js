@@ -1,29 +1,18 @@
 var canvas;
 var gl;
+var program;
 
-var eye = [0, 0, 2];
-var at = [0, 0, 0];
-var up = [0, 1, 0];
-
+// vertices and points
 var numVertices = 0;
-
 var pointsArray = [];
 var normalsArray = [];
 
+// matrices
 var modelViewMatrix = mat4(); // identity
 var modelViewMatrixLoc;
 var projectionMatrix;
 var projectionMatrixLoc;
-
 var modelViewStack = [];
-
-// Variables that control the orthographic projection bounds.
-var y_max = 1;
-var y_min = -1;
-var x_max = 1;
-var x_min = -1;
-var near = -10;
-var far = 10;
 
 // Light
 var lightPosition = vec4(1.8, 1, 2, 0.0);
@@ -37,17 +26,38 @@ var materialDiffuse = vec4(1.0, 0.1, 0.1, 1.0);
 var materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 var materialShininess = 50.0;
 
+// color
 var ctm;
 var ambientColor, diffuseColor, specularColor;
-var program;
 
-var theta = [0, 0, 0];
-
+// to keep track of point positions
 var bowStartPoint = 0;
 var bowEndPoint = 0;
 var boxPointEnd = 0;
 var bowPointEnd = 0;
 var wrapPointEnd = 0;
+
+//	"camera" variables
+var zoomFactor = 3.0;
+var translateFactorX = -0.75;
+var translateFactorY = -0.25;
+var phi = 30; // camera rotating angles
+var theta = 20;
+var Radius = 1.5; // radius of the camera
+
+// camera
+var eye = [1, 1, 1];
+var at = [0, 0, 0];
+var up = [0, 1, 0];
+
+//	Orthographics projection variables
+var left = -1;
+var right = 1;
+var ytop = 1;
+var bottom = -1;
+var near = -10;
+var far = 10;
+var deg = 5;
 
 // vertices
 var vertices = [
@@ -71,35 +81,6 @@ var vertices = [
   vec4(0.25, -0.01, -0.01, 1), // btm-left-back 16
   vec4(0.75, -0.01, -0.01, 1) // btm-right-back 17
 ];
-
-// PFour namespace - contains information about the current project.
-var PFour = {
-  // Target animation control variables.
-  animating: true,
-  targetDir: "R",
-  currTargetTrans: 0,
-  targetStepSize: 0.1,
-
-  currentStep: 0,
-
-  // Camera pan control variables.
-  zoomFactor: 2,
-  translateX: 0,
-  translateY: 0,
-
-  // Camera rotate control variables.
-  phi: 1,
-  theta: 0.5,
-  radius: 1,
-  dr: (5.0 * Math.PI) / 180.0,
-
-  // Mouse control variables - check AttachHandlers() to see how they're used.
-  mouseDownRight: false,
-  mouseDownLeft: false,
-
-  mousePosOnClickX: 0,
-  mousePosOnClickY: 0
-};
 
 function scale4(a, b, c) {
   var result = mat4();
@@ -166,10 +147,24 @@ function QuadPresentWrap() {
 }
 
 function DrawPresentBox() {
+  // change color of object
+  materialAmbient = vec4(1, 0.1, 0.1, 1.0);
+  materialDiffuse = vec4(1, 0.1, 0.1, 1.0);
+  ambientProduct = mult(lightAmbient, materialAmbient);
+  diffuseProduct = mult(lightDiffuse, materialDiffuse);
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "ambientProduct"),
+    flatten(ambientProduct)
+  );
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "diffuseProduct"),
+    flatten(diffuseProduct)
+  );
   gl.drawArrays(gl.TRIANGLES, 0, boxPointEnd);
 }
 
 function DrawPresentBow() {
+  // change color of object
   materialAmbient = vec4(0.1, 0.7, 0.1, 1.0);
   materialDiffuse = vec4(0.1, 0.7, 0.1, 1.0);
   ambientProduct = mult(lightAmbient, materialAmbient);
@@ -184,14 +179,14 @@ function DrawPresentBow() {
   );
   // draw right side of bow
   modelViewStack.push(modelViewMatrix);
-  modelViewMatrix = mult(modelViewMatrix, translate(1, 1.22, 0.3));
+  modelViewMatrix = mult(modelViewMatrix, translate(0.9, 1.22, 0.3));
   modelViewMatrix = mult(modelViewMatrix, scale4(0.8, 0.4, 1));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   gl.drawArrays(gl.TRIANGLES, boxPointEnd, bowPointEnd - boxPointEnd);
   modelViewMatrix = modelViewStack.pop();
   // draw left side of bow
   modelViewStack.push(modelViewMatrix);
-  modelViewMatrix = mult(modelViewMatrix, translate(0.2, 1.22, 0.3));
+  modelViewMatrix = mult(modelViewMatrix, translate(0.1, 1.22, 0.3));
   modelViewMatrix = mult(modelViewMatrix, scale4(0.8, 0.4, 1));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   gl.drawArrays(gl.TRIANGLES, boxPointEnd, bowPointEnd - boxPointEnd);
@@ -266,7 +261,7 @@ window.onload = function init() {
 
   GenerateBowPoints();
 
-  // draw mesh item
+  // draw mesh items
   QuadPresentBox();
 
   QuadPresentBow();
@@ -290,6 +285,7 @@ window.onload = function init() {
   gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPosition);
 
+  // set up matrices
   modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
   projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
 
@@ -317,7 +313,37 @@ window.onload = function init() {
 
   gl.uniform1f(gl.getUniformLocation(program, "shininess"), materialShininess);
 
-  AttachHandlers();
+  // support user interface
+  document.getElementById("phiPlus").onclick = function() {
+    phi += deg;
+  };
+  document.getElementById("phiMinus").onclick = function() {
+    phi -= deg;
+  };
+  document.getElementById("thetaPlus").onclick = function() {
+    theta += deg;
+  };
+  document.getElementById("thetaMinus").onclick = function() {
+    theta -= deg;
+  };
+  document.getElementById("zoomIn").onclick = function() {
+    zoomFactor *= 0.95;
+  };
+  document.getElementById("zoomOut").onclick = function() {
+    zoomFactor *= 1.05;
+  };
+  document.getElementById("left").onclick = function() {
+    translateFactorX -= 0.1;
+  };
+  document.getElementById("right").onclick = function() {
+    translateFactorX += 0.1;
+  };
+  document.getElementById("up").onclick = function() {
+    translateFactorY += 0.1;
+  };
+  document.getElementById("down").onclick = function() {
+    translateFactorY -= 0.1;
+  };
 
   render();
 };
@@ -325,75 +351,34 @@ window.onload = function init() {
 var render = function() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  // Setup the projection matrix.
+  // set up view and projection
   projectionMatrix = ortho(
-    x_min * PFour.zoomFactor - PFour.translateX,
-    x_max * PFour.zoomFactor - PFour.translateX,
-    y_min * PFour.zoomFactor - PFour.translateY,
-    y_max * PFour.zoomFactor - PFour.translateY,
+    left * zoomFactor - translateFactorX,
+    right * zoomFactor - translateFactorX,
+    bottom * zoomFactor - translateFactorY,
+    ytop * zoomFactor - translateFactorY,
     near,
     far
   );
-  gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
 
-  // Setup the initial model-view matrix.
   eye = vec3(
-    PFour.radius * Math.cos(PFour.phi),
-    PFour.radius * Math.sin(PFour.theta),
-    PFour.radius * Math.sin(PFour.phi)
+    Radius *
+      Math.cos((theta * Math.PI) / 180.0) *
+      Math.cos((phi * Math.PI) / 180.0),
+    Radius * Math.sin((theta * Math.PI) / 180.0),
+    Radius *
+      Math.cos((theta * Math.PI) / 180.0) *
+      Math.sin((phi * Math.PI) / 180.0)
   );
+
   modelViewMatrix = lookAt(eye, at, up);
+
+  gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
   DrawPresentBox();
   DrawPresentBow();
   DrawPresentWrap();
+
+  requestAnimFrame(render);
 };
-
-// Sets all of the event handlers onto the document/canvas.
-function AttachHandlers() {
-  // Set the scroll wheel to change the zoom factor.
-  document.getElementById("gl-canvas").addEventListener("wheel", function(e) {
-    if (e.wheelDelta > 0) {
-      PFour.zoomFactor = Math.max(0.1, PFour.zoomFactor - 0.3);
-    } else {
-      PFour.zoomFactor += 0.3;
-    }
-  });
-  document
-    .getElementById("gl-canvas")
-    .addEventListener("mousedown", function(e) {
-      if (e.which == 1) {
-        PFour.mouseDownLeft = true;
-        PFour.mouseDownRight = false;
-        PFour.mousePosOnClickY = e.y;
-        PFour.mousePosOnClickX = e.x;
-      } else if (e.which == 3) {
-        PFour.mouseDownRight = true;
-        PFour.mouseDownLeft = false;
-        PFour.mousePosOnClickY = e.y;
-        PFour.mousePosOnClickX = e.x;
-      }
-    });
-
-  document.addEventListener("mouseup", function(e) {
-    PFour.mouseDownLeft = false;
-    PFour.mouseDownRight = false;
-  });
-
-  document.addEventListener("mousemove", function(e) {
-    if (PFour.mouseDownRight) {
-      PFour.translateX += (e.x - PFour.mousePosOnClickX) / 30;
-      PFour.mousePosOnClickX = e.x;
-
-      PFour.translateY -= (e.y - PFour.mousePosOnClickY) / 30;
-      PFour.mousePosOnClickY = e.y;
-    } else if (PFour.mouseDownLeft) {
-      PFour.phi += (e.x - PFour.mousePosOnClickX) / 100;
-      PFour.mousePosOnClickX = e.x;
-
-      PFour.theta += (e.y - PFour.mousePosOnClickY) / 100;
-      PFour.mousePosOnClickY = e.y;
-    }
-  });
-}
