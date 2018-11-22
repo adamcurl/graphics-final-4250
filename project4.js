@@ -1,37 +1,37 @@
-// var canvas;
-// var gl;
-// var program;
+var canvas;
+var gl;
+var program;
 
-// // vertices and points
-// var numVertices = 0;
-// var pointsArray = [];
-// var normalsArray = [];
+// vertices and points
+var numVertices = 0;
+var pointsArray = [];
+var normalsArray = [];
 
-// // matrices
-// var modelViewMatrix = mat4(); // identity
-// var modelViewMatrixLoc;
-// var projectionMatrix;
-// var projectionMatrixLoc;
-// var modelViewStack = [];
+// matrices
+var modelViewMatrix = mat4(); // identity
+var modelViewMatrixLoc;
+var projectionMatrix;
+var projectionMatrixLoc;
+var modelViewStack = [];
 
-// //matrix operations
-// var s,t,r;
+//matrix operations
+var s, t, r;
 
-// // Light
-// var lightPosition = vec4(1.8, 1, 2, 0.0);
-// var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0);
-// var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
-// var lightSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+// Light
+var lightPosition = vec4(1.8, 1, 2, 0.0);
+var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0);
+var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
+var lightSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 
-// // Material
-// var materialAmbient = vec4(1.0, 0.1, 0.1, 1.0);
-// var materialDiffuse = vec4(1.0, 0.1, 0.1, 1.0);
-// var materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
-// var materialShininess = 50.0;
+// Material
+var materialAmbient = vec4(1.0, 0.1, 0.1, 1.0);
+var materialDiffuse = vec4(1.0, 0.1, 0.1, 1.0);
+var materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+var materialShininess = 50.0;
 
-// // color
-// var ctm;
-// var ambientColor, diffuseColor, specularColor;
+// color
+var ctm;
+var ambientColor, diffuseColor, specularColor;
 
 // to keep track of point positions
 var boxPointEnd = 0;
@@ -40,32 +40,32 @@ var spherePointsEnd = 0;
 var hatPointEnd = 0;
 var nosePointEnd = 540; //((stacks-1)*6+3)*slices
 
-// //	"camera" variables
-// var zoomFactor = 3.0;
-// var translateFactorX = -0.75;
-// var translateFactorY = -0.25;
-// var phi = 30; // camera rotating angles
-// var theta = 20;
-// var Radius = 1.5; // radius of the camera
+//	"camera" variables
+var zoomFactor = 3.0;
+var translateFactorX = -0.75;
+var translateFactorY = -0.25;
+var phi = 30; // camera rotating angles
+var theta = 20;
+var Radius = 1.5; // radius of the camera
 
-// // camera
-// var eye = [1, 1, 1];
-// var at = [0, 0, 0];
-// var up = [0, 1, 0];
+// camera
+var eye = [1, 1, 1];
+var at = [0, 0, 0];
+var up = [0, 1, 0];
 
 // variable for drawing the unit sphere
 var cubeCount = 36;
 var sphereCount = 0;
 var numTimesToSubdivide = 5;
 
-// //	Orthographics projection variables
-// var left = -1;
-// var right = 1;
-// var ytop = 1;
-// var bottom = -1;
-// var near = -10;
-// var far = 10;
-// var deg = 5;
+//	Orthographics projection variables
+var left = -1;
+var right = 1;
+var ytop = 1;
+var bottom = -1;
+var near = -10;
+var far = 10;
+var deg = 5;
 
 // vertices
 var vertices = [
@@ -126,28 +126,28 @@ function MailPostPoints() {
   console.log("postpointend", postPointEnd); //total number of points for post
 }
 
-// function quad(a, b, c, d) {
-//   var t1 = subtract(vertices[b], vertices[a]);
-//   var t2 = subtract(vertices[c], vertices[b]);
-//   var normal = cross(t1, t2);
-//   var normal = vec3(normal);
-//   normal = normalize(normal);
+function quad(a, b, c, d) {
+  var t1 = subtract(vertices[b], vertices[a]);
+  var t2 = subtract(vertices[c], vertices[b]);
+  var normal = cross(t1, t2);
+  var normal = vec3(normal);
+  normal = normalize(normal);
 
-//   pointsArray.push(vertices[a]);
-//   normalsArray.push(normal);
-//   pointsArray.push(vertices[b]);
-//   normalsArray.push(normal);
-//   pointsArray.push(vertices[c]);
-//   normalsArray.push(normal);
-//   pointsArray.push(vertices[a]);
-//   normalsArray.push(normal);
-//   pointsArray.push(vertices[c]);
-//   normalsArray.push(normal);
-//   pointsArray.push(vertices[d]);
-//   normalsArray.push(normal);
+  pointsArray.push(vertices[a]);
+  normalsArray.push(normal);
+  pointsArray.push(vertices[b]);
+  normalsArray.push(normal);
+  pointsArray.push(vertices[c]);
+  normalsArray.push(normal);
+  pointsArray.push(vertices[a]);
+  normalsArray.push(normal);
+  pointsArray.push(vertices[c]);
+  normalsArray.push(normal);
+  pointsArray.push(vertices[d]);
+  normalsArray.push(normal);
 
-//   numVertices += 6;
-// }
+  numVertices += 6;
+}
 
 function quadAlt(a, b, c, d) {
   var points = [a, b, c, d];

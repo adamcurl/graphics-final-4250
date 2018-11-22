@@ -53,6 +53,11 @@ var near = -10;
 var far = 10;
 var deg = 5;
 
+// variable for drawing the unit sphere
+var cubeCount = 36;
+var sphereCount = 0;
+var numTimesToSubdivide = 5;
+
 window.onload = function init() {
   canvas = document.getElementById("gl-canvas");
 
@@ -78,8 +83,19 @@ window.onload = function init() {
   QuadPresentBow();
   QuadPresentWrap();
   QuadPrism();
-  // QuadMailBox();
-  // MailPostPoints();
+
+  // coordinates of the initial points of the tetrahedron for drawing the unit sphere
+  var va = vec4(0.0, 0.0, -1.0, 1);
+  var vb = vec4(0.0, 0.942809, 0.333333, 1);
+  var vc = vec4(-0.816497, -0.471405, 0.333333, 1);
+  var vd = vec4(0.816497, -0.471405, 0.333333, 1);
+  tetrahedron(va, vb, vc, vd, numTimesToSubdivide);
+  spherePointsEnd = numVertices;
+
+  QuadMailBox();
+  MailPostPoints();
+
+  GenerateNose(0.08, 0.45);
 
   // #region setup
   // Buffers
@@ -207,6 +223,33 @@ var render = function() {
   modelViewMatrix = mult(modelViewMatrix, translate(-0.4, 0, -1));
   DrawHouse();
   modelViewMatrix = modelViewStack.pop();
+
+  // draw snowman
+  modelViewStack.push(modelViewMatrix); //PUSH
+  t = translate(2, 0.5, 6);
+  modelViewMatrix = mult(modelViewMatrix, t); //move
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawSnowmanBody(); //draw snowman body
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  // draw mailbox
+  modelViewStack.push(modelViewMatrix); //PUSH
+  t = translate(3, 2, 3);
+  s = scale4(0.4, 0.4, 0.4);
+  modelViewMatrix = mult(mult(modelViewMatrix, t), s); //shrink and move
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawMailBoxHead(); //draw mailbox head
+  DrawMailPost(); //draw mailbox post
+  DrawMailFlag();
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  modelViewStack.push(modelViewMatrix); //PUSH
+  t = translate(1, -0.2, 6.05);
+  modelViewMatrix = mult(modelViewMatrix, t); //move
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawNose(); //draw snowman nose
+  DrawFace(); //draw the snowmans eyes and mouth
+  modelViewMatrix = modelViewStack.pop(); //POP
 
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 
