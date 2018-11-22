@@ -11,7 +11,7 @@ var mailBoxPointEnd = 0;
 var postPointEnd = 0;
 var spherePointsEnd = 0;
 var hatPointEnd = 0;
-var nosePointEnd = 540; //((stacks-1)*6+3)*slices
+var nosePointEnd = 0; //((stacks-1)*6+3)*slices
 
 // vertices
 var vertices = [
@@ -121,6 +121,7 @@ function QuadPresentWrap() {
   wrapPointEnd = numVertices;
 }
 
+/*** MARTINA ***/
 function QuadMailBox() {
   quad(22, 26, 29, 25); // AEHD
   quad(23, 24, 28, 27); // BCGF
@@ -144,4 +145,48 @@ function MailPostPoints() {
 
   postPointEnd = numVertices;
   console.log("postpointend", postPointEnd); //total number of points for post
+}
+
+function GenerateNose(radius, height) {
+  //var hypotenuse=Math.sqrt(height*height + radius*radius);
+  var stacks = 8;
+  var slices = 12;
+  // starting out with a single line in xy-plane
+  var line = [];
+  var segmentX = radius / stacks;
+  var segmentY = height / stacks;
+  for (var p = 0; p <= stacks; p++) {
+    line.push(vec4(p * segmentX, p * segmentY, 0, 1));
+  }
+
+  prev = line;
+  // rotate around y axis
+  var m = rotate(360 / slices, 0, 1, 0);
+  for (var i = 1; i <= slices; i++) {
+    var curr = [];
+
+    // compute the new set of points with one rotation
+    for (var j = 0; j <= stacks; j++) {
+      var v4 = multiply(m, prev[j]);
+      curr.push(v4);
+    }
+
+    // triangle bottom of the cone
+    triangleAlt(prev[1], prev[0], curr[1]);
+
+    // create the triangles for this slice
+    for (var j = 1; j < stacks; j++) {
+      prev1 = prev[j];
+      prev2 = prev[j + 1];
+
+      curr1 = curr[j];
+      curr2 = curr[j + 1];
+
+      //quad(prev1, curr1, curr2, prev2);
+      quadAlt(prev2, prev1, curr1, curr2);
+    }
+
+    prev = curr;
+  }
+  nosePointEnd = numVertices;
 }
