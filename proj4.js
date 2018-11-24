@@ -224,7 +224,7 @@ var render = function() {
 
   // draw present
   modelViewStack.push(modelViewMatrix);
-  modelViewMatrix = mult(modelViewMatrix, translate(5, 0.25, 1));
+  modelViewMatrix = mult(modelViewMatrix, translate(6, 0.25, 1));
   modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
   DrawPresent();
   modelViewMatrix = modelViewStack.pop();
@@ -264,11 +264,31 @@ var render = function() {
 
   // draw tree
   modelViewStack.push(modelViewMatrix);
-  modelViewMatrix = mult(modelViewMatrix, translate(6, 3, 5));
-  modelViewMatrix = mult(modelViewMatrix, scale4(4, 4, 4));
-  modelViewMatrix = mult(modelViewMatrix, rotate(180, 0, 0, 1));
+  modelViewMatrix = mult(modelViewMatrix, translate(4.5, 0.5, 1.5));
+  modelViewMatrix = mult(modelViewMatrix, scale4(1.2, 3, 1.2));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawTree();
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  // draw tree trunk
+  // change color of object
+  materialAmbient = vec4(0.6, 0.6, 0, 1);
+  materialDiffuse = vec4(0.6, 0.6, 0, 1);
+  ambientProduct = mult(lightAmbient, materialAmbient);
+  diffuseProduct = mult(lightDiffuse, materialDiffuse);
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "ambientProduct"),
+    flatten(ambientProduct)
+  );
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "diffuseProduct"),
+    flatten(diffuseProduct)
+  );
+  modelViewStack.push(modelViewMatrix);
+  modelViewMatrix = mult(modelViewMatrix, translate(4.5, 0.5, 1.5));
+  modelViewMatrix = mult(modelViewMatrix, scale4(0.4, 1, 0.4));
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawSolidCube(1);
   modelViewMatrix = modelViewStack.pop(); //POP
 
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));

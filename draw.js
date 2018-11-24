@@ -462,5 +462,18 @@ function DrawFace() {
 }
 
 function DrawTree() {
-  gl.drawArrays(gl.TRIANGLES, nosePointEnd, 24 * 6);
+  // change color of object
+  materialAmbient = vec4(0, 1, 0, 1);
+  materialDiffuse = vec4(0, 1, 0, 1);
+  ambientProduct = mult(lightAmbient, materialAmbient);
+  diffuseProduct = mult(lightDiffuse, materialDiffuse);
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "ambientProduct"),
+    flatten(ambientProduct)
+  );
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "diffuseProduct"),
+    flatten(diffuseProduct)
+  );
+  gl.drawArrays(gl.TRIANGLES, nosePointEnd, 6 * 24 * 24);
 }
