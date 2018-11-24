@@ -96,6 +96,7 @@ window.onload = function init() {
   MailPostPoints();
 
   GenerateNose(0.08, 0.45);
+  GenerateTreePoints();
 
   // #region setup
   // Buffers
@@ -147,33 +148,43 @@ window.onload = function init() {
   // #region support user interface
   document.getElementById("phiPlus").onclick = function() {
     phi += deg;
+    render();
   };
   document.getElementById("phiMinus").onclick = function() {
     phi -= deg;
+    render();
   };
   document.getElementById("thetaPlus").onclick = function() {
     theta += deg;
+    render();
   };
   document.getElementById("thetaMinus").onclick = function() {
     theta -= deg;
+    render();
   };
   document.getElementById("zoomIn").onclick = function() {
     zoomFactor *= 0.95;
+    render();
   };
   document.getElementById("zoomOut").onclick = function() {
     zoomFactor *= 1.05;
+    render();
   };
   document.getElementById("left").onclick = function() {
     translateFactorX -= 0.1;
+    render();
   };
   document.getElementById("right").onclick = function() {
     translateFactorX += 0.1;
+    render();
   };
   document.getElementById("up").onclick = function() {
     translateFactorY += 0.1;
+    render();
   };
   document.getElementById("down").onclick = function() {
     translateFactorY -= 0.1;
+    render();
   };
   // #endregion
 
@@ -251,7 +262,14 @@ var render = function() {
   DrawFace(); //draw the snowmans eyes and mouth
   modelViewMatrix = modelViewStack.pop(); //POP
 
+  // draw tree
+  modelViewStack.push(modelViewMatrix);
+  modelViewMatrix = mult(modelViewMatrix, translate(6, 3, 5));
+  modelViewMatrix = mult(modelViewMatrix, scale4(4, 4, 4));
+  modelViewMatrix = mult(modelViewMatrix, rotate(180, 0, 0, 1));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawTree();
+  modelViewMatrix = modelViewStack.pop(); //POP
 
-  requestAnimFrame(render);
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 };

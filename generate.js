@@ -12,6 +12,7 @@ var postPointEnd = 0;
 var spherePointsEnd = 0;
 var hatPointEnd = 0;
 var nosePointEnd = 0; //((stacks-1)*6+3)*slices
+var treePointEnd = 0;
 
 // vertices
 var vertices = [
@@ -59,6 +60,36 @@ var vertices = [
   vec4(0, 0.75, 5, 1) // R(39)
 ];
 
+var surfaceVertices = [];
+
+var treePoints = [
+  [0, 0.104, 0.0],
+  [0.028, 0.11, 0.0],
+  [0.052, 0.126, 0.0],
+  [0.068, 0.161, 0.0],
+  [0.067, 0.197, 0.0],
+  [0.055, 0.219, 0.0],
+  [0.041, 0.238, 0.0],
+  [0.033, 0.245, 0.0],
+  [0.031, 0.246, 0.0],
+  [0.056, 0.257, 0.0],
+  [0.063, 0.266, 0.0],
+  [0.059, 0.287, 0.0],
+  [0.048, 0.294, 0.0],
+  [0.032, 0.301, 0.0],
+  [0.027, 0.328, 0.0],
+  [0.032, 0.38, 0.0],
+  [0.043, 0.41, 0.0],
+  [0.058, 0.425, 0.0],
+  [0.066, 0.433, 0.0],
+  [0.069, 0.447, 0.0],
+  [0.093, 0.465, 0.0],
+  [0.107, 0.488, 0.0],
+  [0.106, 0.512, 0.0],
+  [0.115, 0.526, 0.0],
+  [0, 0.525, 0.0]
+];
+
 /********** GENERATE FUNCTIONS **********/
 function GenerateBowPoints() {
   var Radius = 0.4;
@@ -79,6 +110,7 @@ function GenerateBowPoints() {
     vertices.push(vec4(X, Y, 0.5, 1));
   }
   bowEndPoint = vertices.length - 1;
+  console.log(vertices.length);
 }
 
 /********** QUAD FUNCTIONS **********/
@@ -121,7 +153,6 @@ function QuadPresentWrap() {
   wrapPointEnd = numVertices;
 }
 
-/*** MARTINA ***/
 function QuadMailBox() {
   quad(22, 26, 29, 25); // AEHD
   quad(23, 24, 28, 27); // BCGF
@@ -189,4 +220,56 @@ function GenerateNose(radius, height) {
     prev = curr;
   }
   nosePointEnd = numVertices;
+}
+
+function GenerateTreePoints() {
+  //Setup initial points matrix
+  for (var i = 0; i < 25; i++) {
+    surfaceVertices.push(
+      vec4(treePoints[i][0], treePoints[i][1], treePoints[i][2], 1)
+    );
+  }
+
+  var r;
+  var t = Math.PI / 12;
+
+  // sweep the original curve another "angle" degree
+  for (var j = 0; j < 24; j++) {
+    var angle = (j + 1) * t;
+
+    // for each sweeping step, generate 25 new points corresponding to the original points
+    for (var i = 0; i < 25; i++) {
+      r = surfaceVertices[i][0];
+      surfaceVertices.push(
+        vec4(
+          r * Math.cos(angle),
+          surfaceVertices[i][1],
+          -r * Math.sin(angle),
+          1
+        )
+      );
+    }
+  }
+
+  var N = 25;
+  // quad strips are formed slice by slice (not layer by layer)
+  for (
+    var i = 0;
+    i < 24;
+    i++ // slices
+  ) {
+    for (
+      var j = 0;
+      j < 24;
+      j++ // layers
+    ) {
+      surfaceQuad(
+        i * N + j,
+        (i + 1) * N + j,
+        (i + 1) * N + (j + 1),
+        i * N + (j + 1)
+      );
+    }
+  }
+  treePointEnd = numVertices;
 }
