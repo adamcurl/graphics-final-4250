@@ -233,7 +233,6 @@ function DrawEnvironment() {
   modelViewMatrix = modelViewStack.pop();
 }
 
-/*** MARTINA ***/
 function DrawSnowmanBody() {
   materialAmbient = vec4(1, 1, 1, 1);
   materialDiffuse = vec4(1, 1, 1, 1);
@@ -460,4 +459,8 @@ function DrawFace() {
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawSolidSphere(0.04);
   modelViewMatrix = modelViewStack.pop(); //POP
+}
+
+function DrawTree() {
+  gl.drawArrays(gl.TRIANGLES, nosePointEnd, 24 * 6);
 }

@@ -194,3 +194,55 @@ function multiply(m, v) {
   );
   return vv;
 }
+
+function surfaceQuad(a, b, c, d) {
+  var indices = [a, b, c, d];
+  var normal = surfaceNewell(indices);
+
+  // triangle a-b-c
+  pointsArray.push(surfaceVertices[a]);
+  normalsArray.push(normal);
+
+  pointsArray.push(surfaceVertices[b]);
+  normalsArray.push(normal);
+
+  pointsArray.push(surfaceVertices[c]);
+  normalsArray.push(normal);
+
+  // triangle a-c-d
+  pointsArray.push(surfaceVertices[a]);
+  normalsArray.push(normal);
+
+  pointsArray.push(surfaceVertices[c]);
+  normalsArray.push(normal);
+
+  pointsArray.push(surfaceVertices[d]);
+  normalsArray.push(normal);
+
+  numVertices += 6;
+}
+
+function surfaceNewell(indices) {
+  var L = indices.length;
+  var x = 0,
+    y = 0,
+    z = 0;
+  var index, nextIndex;
+
+  for (var i = 0; i < L; i++) {
+    index = indices[i];
+    nextIndex = indices[(i + 1) % L];
+
+    x +=
+      (surfaceVertices[index][1] - surfaceVertices[nextIndex][1]) *
+      (surfaceVertices[index][2] + surfaceVertices[nextIndex][2]);
+    y +=
+      (surfaceVertices[index][2] - surfaceVertices[nextIndex][2]) *
+      (surfaceVertices[index][0] + surfaceVertices[nextIndex][0]);
+    z +=
+      (surfaceVertices[index][0] - surfaceVertices[nextIndex][0]) *
+      (surfaceVertices[index][1] + surfaceVertices[nextIndex][1]);
+  }
+
+  return normalize(vec3(x, y, z));
+}
