@@ -2,6 +2,8 @@
 var canvas;
 var gl;
 var program;
+var animating = 0;
+var lights = 0;
 
 // vertices and points
 var numVertices = 0;
@@ -186,6 +188,13 @@ window.onload = function init() {
     translateFactorY -= 0.1;
     render();
   };
+  // If you press 'a', start or end animation.
+  document.addEventListener("keypress", function(e) {
+    if (e.keyCode == 97) {
+      animating = !animating;
+      render();
+    }
+  });
   // #endregion
 
   render();
@@ -271,25 +280,28 @@ var render = function() {
   modelViewMatrix = modelViewStack.pop(); //POP
 
   // draw tree trunk
-  // change color of object
-  materialAmbient = vec4(0.6, 0.6, 0, 1);
-  materialDiffuse = vec4(0.6, 0.6, 0, 1);
-  ambientProduct = mult(lightAmbient, materialAmbient);
-  diffuseProduct = mult(lightDiffuse, materialDiffuse);
-  gl.uniform4fv(
-    gl.getUniformLocation(program, "ambientProduct"),
-    flatten(ambientProduct)
-  );
-  gl.uniform4fv(
-    gl.getUniformLocation(program, "diffuseProduct"),
-    flatten(diffuseProduct)
-  );
+  changeColor(0.6, 0.6, 0);
+
   modelViewStack.push(modelViewMatrix);
   modelViewMatrix = mult(modelViewMatrix, translate(4.5, 0.5, 1.5));
   modelViewMatrix = mult(modelViewMatrix, scale4(0.4, 1, 0.4));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawSolidCube(1);
   modelViewMatrix = modelViewStack.pop(); //POP
+
+  // draw lights
+  if (animating) {
+    if (lights) {
+      DrawAlphaLights();
+    } else {
+      DrawBetaLights();
+    }
+    lights = !lights;
+    requestAnimFrame(render);
+  } else {
+    DrawAlphaLights();
+    DrawBetaLights();
+  }
 
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 };
