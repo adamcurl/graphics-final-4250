@@ -246,3 +246,18 @@ function surfaceNewell(indices) {
 
   return normalize(vec3(x, y, z));
 }
+
+function changeColor(a, b, c) {
+  materialAmbient = vec4(a, b, c, 1);
+  materialDiffuse = vec4(a, b, c, 1);
+  ambientProduct = mult(lightAmbient, materialAmbient);
+  diffuseProduct = mult(lightDiffuse, materialDiffuse);
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "ambientProduct"),
+    flatten(ambientProduct)
+  );
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "diffuseProduct"),
+    flatten(diffuseProduct)
+  );
+}
