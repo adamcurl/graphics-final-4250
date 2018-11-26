@@ -261,3 +261,86 @@ function changeColor(a, b, c) {
     flatten(diffuseProduct)
   );
 }
+
+function NewellAlt(indices) {
+  var L = indices.length;
+  var x = 0,
+    y = 0,
+    z = 0;
+  var index, nextIndex;
+
+  for (var i = 0; i < L; i++) {
+    index = indices[i];
+    nextIndex = indices[(i + 1) % L];
+
+    x +=
+      (vertices[index][1] - vertices[nextIndex][1]) *
+      (vertices[index][2] + vertices[nextIndex][2]);
+    y +=
+      (vertices[index][2] - vertices[nextIndex][2]) *
+      (vertices[index][0] + vertices[nextIndex][0]);
+    z +=
+      (vertices[index][0] - vertices[nextIndex][0]) *
+      (vertices[index][1] + vertices[nextIndex][1]);
+  }
+
+  return normalize(vec3(x, y, z));
+}
+
+function polygon(indices) {
+  var M = indices.length;
+  var normal = NewellAlt(indices);
+
+  var prev = 1;
+  var next = 2;
+
+  for (var i = 0; i < M - 2; i++) {
+    pointsArray.push(vertices[indices[0]]);
+    normalsArray.push(normal);
+
+    pointsArray.push(vertices[indices[prev]]);
+    normalsArray.push(normal);
+
+    pointsArray.push(vertices[indices[next]]);
+    normalsArray.push(normal);
+
+    prev = next;
+    next = next + 1;
+  }
+}
+
+function ExtrudedShape() {
+  var basePoints = [];
+  var topPoints = [];
+
+  // create the face list
+  // add the side faces first
+  for (var j = 0; j < N; j++) {
+    quad(j, j + N, ((j + 1) % N) + N, (j + 1) % N);
+  }
+
+  // the first vertices come from the base
+  basePoints.push(0);
+  for (var i = N - 1; i > 0; i--) {
+    basePoints.push(i); // index only
+  }
+  // add the base face as the Nth face
+  polygon(basePoints);
+
+  // the next vertices come from the top
+  for (var i = 0; i < N; i++) {
+    topPoints.push(i + N); // index only
+  }
+  // add the top face
+  polygon(topPoints);
+}
+
+function getRandomFloat(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}

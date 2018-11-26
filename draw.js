@@ -383,3 +383,62 @@ function DrawBetaLights() {
   DrawSolidSphere(0.1);
   modelViewMatrix = modelViewStack.pop(); //POP
 }
+
+function DrawStar() {
+  // change color of object
+  materialAmbient = vec4(1, 1, 0, 1);
+  materialDiffuse = vec4(1, 1, 0, 1);
+  ambientProduct = mult(lightAmbient, materialAmbient);
+  diffuseProduct = mult(lightDiffuse, materialDiffuse);
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "ambientProduct"),
+    flatten(ambientProduct)
+  );
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "diffuseProduct"),
+    flatten(diffuseProduct)
+  );
+
+  modelViewStack.push(modelViewMatrix); //PUSH
+  s = scale4(0.0777, 0.0777, 0.0777);
+  modelViewMatrix = mult(modelViewMatrix, s);
+  //modelViewMatrix = mult(modelViewMatrix, t);
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  gl.drawArrays(gl.TRIANGLES, treePointEnd, 6 * N + 1 * 3 * 2);
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  modelViewStack.push(modelViewMatrix); //PUSH
+  s = scale4(0.0777, 0.0777, 0.0777);
+  r = rotate(180, 1, 0, 0);
+  t = translate(0.2, -2, -4);
+  modelViewMatrix = mult(modelViewMatrix, s);
+  modelViewMatrix = mult(modelViewMatrix, r);
+  modelViewMatrix = mult(modelViewMatrix, t);
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  gl.drawArrays(gl.TRIANGLES, treePointEnd, 6 * N + 1 * 3 * 2);
+  modelViewMatrix = modelViewStack.pop(); //POP
+}
+
+function DrawSnow() {
+  materialAmbient = vec4(1, 1, 1, 1);
+  materialDiffuse = vec4(1, 1, 1, 1);
+  ambientProduct = mult(lightAmbient, materialAmbient);
+  diffuseProduct = mult(lightDiffuse, materialDiffuse);
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "ambientProduct"),
+    flatten(ambientProduct)
+  );
+  gl.uniform4fv(
+    gl.getUniformLocation(program, "diffuseProduct"),
+    flatten(diffuseProduct)
+  );
+
+  for (var i = 0; i < snowArray.length; i++) {
+    modelViewStack.push(modelViewMatrix); //PUSH
+    t = translate(snowArray[i][0], snowArray[i][1], snowArray[i][2]);
+    modelViewMatrix = mult(modelViewMatrix, t);
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+    DrawSolidSphere(0.05);
+    modelViewMatrix = modelViewStack.pop(); //POP
+  }
+}

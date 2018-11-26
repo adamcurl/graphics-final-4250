@@ -60,6 +60,42 @@ var cubeCount = 36;
 var sphereCount = 0;
 var numTimesToSubdivide = 5;
 
+//animation
+var makeItSnow = false;
+var count = 0;
+var snowArray = [
+  vec3(2, 9, 1),
+  vec3(2, 7, 3),
+  vec3(3, 6.5, 1),
+  vec3(2, 7, 4),
+  vec3(4, 10, 3),
+  vec3(6, 9, 5),
+  vec3(4, 8, 5),
+  vec3(5, 8, 3),
+  vec3(9, 10, 2),
+  vec3(5, 9, 3),
+  vec3(3, 9, 2),
+  vec3(4, 8, 3),
+  vec3(2, 6.5, 2),
+  vec3(6, 10, 1),
+  vec3(1, 9, 2),
+  vec3(2, 8, 2),
+  vec3(1, 10, 2),
+  vec3(3, 9, 1),
+  vec3(5, 8, 9),
+  vec3(9, 9, 1),
+  vec3(2, 10, 4),
+  vec3(1, 11, 5),
+  vec3(4, 8, 3),
+  vec3(3, 10, 2),
+  vec3(9, 9, 6),
+  vec3(5, 9, 3),
+  vec3(2, 11, 3),
+  vec3(5, 8, 2),
+  vec3(3, 11, 6),
+  vec3(6, 9, 1)
+];
+
 window.onload = function init() {
   canvas = document.getElementById("gl-canvas");
 
@@ -99,6 +135,7 @@ window.onload = function init() {
 
   GenerateNose(0.08, 0.45);
   GenerateTreePoints();
+  GenerateStar();
 
   // #region setup
   // Buffers
@@ -192,6 +229,8 @@ window.onload = function init() {
   document.addEventListener("keypress", function(e) {
     if (e.keyCode == 97) {
       animating = !animating;
+      makeItSnow = !makeItSnow;
+      count = 0;
       render();
     }
   });
@@ -281,12 +320,21 @@ var render = function() {
 
   // draw tree trunk
   changeColor(0.6, 0.6, 0);
-
   modelViewStack.push(modelViewMatrix);
   modelViewMatrix = mult(modelViewMatrix, translate(4.5, 0.5, 1.5));
   modelViewMatrix = mult(modelViewMatrix, scale4(0.4, 1, 0.4));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawSolidCube(1);
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  //draw star
+  modelViewStack.push(modelViewMatrix); //PUSH
+  r = rotate(90, 1, 0, 0);
+  t = translate(4.2, 1.5, -3);
+  modelViewMatrix = mult(modelViewMatrix, r);
+  modelViewMatrix = mult(modelViewMatrix, t);
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawStar();
   modelViewMatrix = modelViewStack.pop(); //POP
 
   // draw lights
@@ -302,6 +350,33 @@ var render = function() {
     DrawAlphaLights();
     DrawBetaLights();
   }
+
+  // if (makeItSnow) {
+  //   var steps = 250;
+  //   var stepSize = 25 / steps;
+
+  //   if (count <= steps) {
+  //     modelViewStack.push(modelViewMatrix); //PUSH
+  //     t = translate(0, stepSize * (1 - count), 0);
+  //     modelViewMatrix = mult(modelViewMatrix, t);
+  //     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  //     DrawSnow();
+  //     modelViewMatrix = modelViewStack.pop(); //POP
+
+  //     count++;
+  //   } else {
+  //     count = 0;
+  //   }
+  //   requestAnimFrame(render);
+  // } else {
+  //   // draw snow
+  //   modelViewStack.push(modelViewMatrix); //PUSH
+  //   t = translate(0.45, 0.4, 0.45);
+  //   modelViewMatrix = mult(modelViewMatrix, t);
+  //   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  //   DrawSnow(0.05);
+  //   modelViewMatrix = modelViewStack.pop(); //POP
+  // }
 
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
 };
