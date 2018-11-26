@@ -88,31 +88,6 @@ var treePoints = [
   [0, 0.8, 0],
   [0, 0.8, 0],
   [0, 0.8, 0]
-  // [0, 0.104, 0.0],
-  // [0.028, 0.11, 0.0],
-  // [0.052, 0.126, 0.0],
-  // [0.068, 0.161, 0.0],
-  // [0.067, 0.197, 0.0],
-  // [0.055, 0.219, 0.0],
-  // [0.041, 0.238, 0.0],
-  // [0.033, 0.245, 0.0],
-  // [0.031, 0.246, 0.0],
-  // [0.056, 0.257, 0.0],
-  // [0.063, 0.266, 0.0],
-  // [0.059, 0.287, 0.0],
-  // [0.048, 0.294, 0.0],
-  // [0.032, 0.301, 0.0],
-  // [0.027, 0.328, 0.0],
-  // [0.032, 0.38, 0.0],
-  // [0.043, 0.41, 0.0],
-  // [0.058, 0.425, 0.0],
-  // [0.066, 0.433, 0.0],
-  // [0.069, 0.447, 0.0],
-  // [0.093, 0.465, 0.0],
-  // [0.107, 0.488, 0.0],
-  // [0.106, 0.512, 0.0],
-  // [0.115, 0.526, 0.0],
-  // [0, 0.525, 0.0]
 ];
 
 /********** GENERATE FUNCTIONS **********/
@@ -298,4 +273,44 @@ function GenerateTreePoints() {
     }
   }
   treePointEnd = numVertices;
+}
+
+function GenerateStar() {
+  var height = 2;
+  vertices = [vec4(2, 0, 1, 1), vec4(7, 0, 1, 1), vec4(4.5, 0, 5.33, 1)];
+  N = vertices.length;
+
+  // add the second set of points
+  for (var i = 0; i < N; i++) {
+    vertices.push(
+      vec4(vertices[i][0], vertices[i][1] + height, vertices[i][2], 1)
+    );
+  }
+  ExtrudedShape();
+}
+
+function ExtrudedShape() {
+  var basePoints = [];
+  var topPoints = [];
+
+  // create the face list
+  // add the side faces first --> N quads
+  for (var j = 0; j < 3; j++) {
+    quad(j, j + 3, ((j + 1) % 3) + 3, (j + 1) % 3);
+  }
+
+  // the first N vertices come from the base
+  basePoints.push(0);
+  for (var i = 3 - 1; i > 0; i--) {
+    basePoints.push(i); // index only
+  }
+  // add the base face as the Nth face
+  polygon(basePoints);
+
+  // the next N vertices come from the top
+  for (var i = 0; i < 3; i++) {
+    topPoints.push(i + 3); // index only
+  }
+  // add the top face
+  polygon(topPoints);
 }
