@@ -18,7 +18,7 @@ var projectionMatrixLoc;
 var modelViewStack = [];
 
 // Light
-var lightPosition = vec4(4, 5, 2, 0.0);
+var lightPosition = vec4(-1, 6, 8, 0.0);
 var lightAmbient = vec4(0.2, 0.2, 0.2, 1.0);
 var lightDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
 var lightSpecular = vec4(1.0, 1.0, 1.0, 1.0);
@@ -353,7 +353,7 @@ var render = function() {
 
   // if (makeItSnow) {
   //   var steps = 250;
-  //   var stepSize = 25 / steps;
+  //   var stepSize = 50 / steps;
 
   //   if (count <= steps) {
   //     modelViewStack.push(modelViewMatrix); //PUSH
@@ -364,10 +364,11 @@ var render = function() {
   //     modelViewMatrix = modelViewStack.pop(); //POP
 
   //     count++;
+  //     requestAnimFrame(render);
   //   } else {
   //     count = 0;
+  //     makeItSnow = !makeItSnow;
   //   }
-  //   requestAnimFrame(render);
   // } else {
   //   // draw snow
   //   modelViewStack.push(modelViewMatrix); //PUSH
