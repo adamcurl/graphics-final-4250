@@ -2,8 +2,8 @@
 var canvas;
 var gl;
 var program;
-var animating = 0;
-var lights = 0;
+var animating = false;
+var lights = false;
 
 // vertices and points
 var numVertices = 0;
@@ -225,19 +225,30 @@ window.onload = function init() {
     translateFactorY -= 0.1;
     render();
   };
-  // If you press 'a', start or end animation.
-  document.addEventListener("keypress", function(e) {
-    if (e.keyCode == 97) {
-      animating = !animating;
-      makeItSnow = !makeItSnow;
-      count = 0;
-      render();
-    }
-  });
-  // #endregion
 
+  window.onkeydown = HandleKeyboard;
   render();
 };
+
+// If you press 'a', start or end animation.
+function HandleKeyboard(event) {
+  switch (event.keyCode) {
+    case 65:
+      if (makeItSnow) {
+        makeItSnow = false;
+      }
+      if (animating) {
+        animating = false;
+      } else {
+        makeItSnow = true;
+        animating = true;
+        lights = true;
+        count = 0;
+      }
+
+      break;
+  }
+}
 
 var render = function() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -293,7 +304,7 @@ var render = function() {
 
   // draw mailbox
   modelViewStack.push(modelViewMatrix); //PUSH
-  t = translate(3, 2, 3);
+  t = translate(3, 1, 3);
   s = scale4(0.4, 0.4, 0.4);
   modelViewMatrix = mult(mult(modelViewMatrix, t), s); //shrink and move
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
@@ -337,7 +348,7 @@ var render = function() {
   DrawStar();
   modelViewMatrix = modelViewStack.pop(); //POP
 
-  // draw lights
+  // draw lights, lights animation checkpoint
   if (animating) {
     if (lights) {
       DrawAlphaLights();
@@ -345,39 +356,35 @@ var render = function() {
       DrawBetaLights();
     }
     lights = !lights;
-    requestAnimFrame(render);
   } else {
     DrawAlphaLights();
     DrawBetaLights();
   }
+  //snow animation checkpoint
+  if (makeItSnow) {
+    var steps = 250;
+    var stepSize = 50 / steps;
 
-  // if (makeItSnow) {
-  //   var steps = 250;
-  //   var stepSize = 50 / steps;
+    if (count <= steps) {
+      modelViewStack.push(modelViewMatrix); //PUSH
+      t = translate(0, stepSize * (1 - count), 0);
+      modelViewMatrix = mult(modelViewMatrix, t);
+      gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+      DrawSnow();
+      modelViewMatrix = modelViewStack.pop(); //POP
 
-  //   if (count <= steps) {
-  //     modelViewStack.push(modelViewMatrix); //PUSH
-  //     t = translate(0, stepSize * (1 - count), 0);
-  //     modelViewMatrix = mult(modelViewMatrix, t);
-  //     gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-  //     DrawSnow();
-  //     modelViewMatrix = modelViewStack.pop(); //POP
-
-  //     count++;
-  //     requestAnimFrame(render);
-  //   } else {
-  //     count = 0;
-  //     makeItSnow = !makeItSnow;
-  //   }
-  // } else {
-  //   // draw snow
-  //   modelViewStack.push(modelViewMatrix); //PUSH
-  //   t = translate(0.45, 0.4, 0.45);
-  //   modelViewMatrix = mult(modelViewMatrix, t);
-  //   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-  //   DrawSnow(0.05);
-  //   modelViewMatrix = modelViewStack.pop(); //POP
-  // }
-
-  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+      count++;
+    } else {
+      count = 0;
+    }
+  } else {
+    // draw snow
+    modelViewStack.push(modelViewMatrix); //PUSH
+    t = translate(0.45, 0.4, 0.45);
+    modelViewMatrix = mult(modelViewMatrix, t);
+    gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+    DrawSnow();
+    modelViewMatrix = modelViewStack.pop(); //POP
+  }
+  requestAnimFrame(render);
 };
