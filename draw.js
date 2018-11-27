@@ -355,6 +355,13 @@ function DrawAlphaLights() {
 
   changeColor(1, 0, 0);
   modelViewStack.push(modelViewMatrix);
+  modelViewMatrix = mult(modelViewMatrix, translate(5.15, 1.4, 1.3));
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawSolidSphere(0.1);
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  changeColor(1, 0, 0);
+  modelViewStack.push(modelViewMatrix);
   modelViewMatrix = mult(modelViewMatrix, translate(4.3, 2, 2));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawSolidSphere(0.1);
@@ -382,22 +389,25 @@ function DrawBetaLights() {
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawSolidSphere(0.1);
   modelViewMatrix = modelViewStack.pop(); //POP
+
+  changeColor(1, 1, 0);
+  modelViewStack.push(modelViewMatrix);
+  modelViewMatrix = mult(modelViewMatrix, translate(3.8, 0.65, 2.3));
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawSolidSphere(0.1);
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  changeColor(0, 0, 1);
+  modelViewStack.push(modelViewMatrix);
+  modelViewMatrix = mult(modelViewMatrix, translate(4.6, 2.3, 1.9));
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawSolidSphere(0.1);
+  modelViewMatrix = modelViewStack.pop(); //POP
 }
 
 function DrawStar() {
   // change color of object
-  materialAmbient = vec4(1, 1, 0, 1);
-  materialDiffuse = vec4(1, 1, 0, 1);
-  ambientProduct = mult(lightAmbient, materialAmbient);
-  diffuseProduct = mult(lightDiffuse, materialDiffuse);
-  gl.uniform4fv(
-    gl.getUniformLocation(program, "ambientProduct"),
-    flatten(ambientProduct)
-  );
-  gl.uniform4fv(
-    gl.getUniformLocation(program, "diffuseProduct"),
-    flatten(diffuseProduct)
-  );
+  changeColor(1, 1, 0);
 
   modelViewStack.push(modelViewMatrix); //PUSH
   s = scale4(0.0777, 0.0777, 0.0777);
@@ -420,18 +430,7 @@ function DrawStar() {
 }
 
 function DrawSnow() {
-  materialAmbient = vec4(1, 1, 1, 1);
-  materialDiffuse = vec4(1, 1, 1, 1);
-  ambientProduct = mult(lightAmbient, materialAmbient);
-  diffuseProduct = mult(lightDiffuse, materialDiffuse);
-  gl.uniform4fv(
-    gl.getUniformLocation(program, "ambientProduct"),
-    flatten(ambientProduct)
-  );
-  gl.uniform4fv(
-    gl.getUniformLocation(program, "diffuseProduct"),
-    flatten(diffuseProduct)
-  );
+  changeColor(1, 1, 1);
 
   for (var i = 0; i < snowArray.length; i++) {
     modelViewStack.push(modelViewMatrix); //PUSH
