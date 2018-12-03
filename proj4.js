@@ -4,6 +4,7 @@ var gl;
 var program;
 var animating = false;
 var lights = false;
+var sounds = [];
 
 // vertices and points
 var numVertices = 0;
@@ -59,6 +60,12 @@ var deg = 5;
 var cubeCount = 36;
 var sphereCount = 0;
 var numTimesToSubdivide = 5;
+
+// texture vars
+var image;
+var texCoordsArray = [];
+var texture;
+var texCoord = [vec2(0, 0), vec2(0, 1), vec2(1, 1), vec2(1, 0)];
 
 //animation
 var makeItSnow = false;
@@ -137,6 +144,9 @@ window.onload = function init() {
   GenerateTreePoints();
   GenerateStar();
 
+  // add sound
+  sounds.push(new Audio("jingle_bells.mp3"));
+
   // #region setup
   // Buffers
   var nBuffer = gl.createBuffer();
@@ -154,6 +164,14 @@ window.onload = function init() {
   var vPosition = gl.getAttribLocation(program, "vPosition");
   gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPosition);
+
+  // var tBuffer = gl.createBuffer();
+  // gl.bindBuffer(gl.ARRAY_BUFFER, tBuffer);
+  // gl.bufferData(gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW);
+
+  // var vTexCoord = gl.getAttribLocation(program, "vTexCoord");
+  // gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
+  // gl.enableVertexAttribArray(vTexCoord);
 
   // set up matrices
   modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
@@ -184,7 +202,7 @@ window.onload = function init() {
   gl.uniform1f(gl.getUniformLocation(program, "shininess"), materialShininess);
   // #endregion
 
-  // #region support user interface
+  // support user interface
   document.getElementById("phiPlus").onclick = function() {
     phi += deg;
     render();
@@ -227,6 +245,24 @@ window.onload = function init() {
   };
 
   window.onkeydown = HandleKeyboard;
+
+  // ==============  Establish Textures =================
+  // create the texture object
+  // texture = gl.createTexture();
+
+  // // create the image object
+  // texture.image = new Image();
+
+  // // register the event handler to be called on loading an image
+  // texture.image.onload = function() {
+  //   loadTexture(texture);
+  // };
+
+  // texture.image.crossOrigin = "anonymous";
+
+  // // Tell the broswer to load an image
+  // texture.image.src = "wrapping_paper.jpg";
+
   render();
 };
 
@@ -236,10 +272,12 @@ function HandleKeyboard(event) {
     case 65:
       if (makeItSnow) {
         makeItSnow = false;
+        sounds[0].pause();
       }
       if (animating) {
         animating = false;
       } else {
+        sounds[0].play();
         makeItSnow = true;
         animating = true;
         lights = true;
@@ -247,6 +285,28 @@ function HandleKeyboard(event) {
       }
 
       break;
+    case 66:
+      // reset view
+      sounds[0].pause();
+      sounds[0].currentTime = 0;
+      zoomFactor = 5.0;
+      translateFactorX = -1.3;
+      translateFactorY = 0;
+      phi = 60;
+      theta = 20;
+      Radius = 1.5;
+
+      eye = [1, 1, 1];
+      at = [0, 0, 0];
+      up = [0, 1, 0];
+
+      left = -1;
+      right = 1;
+      ytop = 1;
+      bottom = -1;
+      near = -10;
+      far = 10;
+      deg = 5;
   }
 }
 
@@ -285,7 +345,39 @@ var render = function() {
   modelViewStack.push(modelViewMatrix);
   modelViewMatrix = mult(modelViewMatrix, translate(6, 0.25, 1));
   modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
-  DrawPresent();
+  // red box
+  changeColor(1, 0.1, 0.1);
+  DrawSolidCube(1);
+  // green bow and wrap
+  changeColor(0.1, 0.7, 0.1);
+  DrawPresentBow();
+  DrawPresentWrap();
+  modelViewMatrix = modelViewStack.pop();
+
+  // draw another present
+  modelViewStack.push(modelViewMatrix);
+  modelViewMatrix = mult(modelViewMatrix, translate(5.7, 0.25, 2.3));
+  modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
+  // blue box
+  changeColor(0.1, 0.1, 1);
+  DrawSolidCube(1);
+  // yellow bow and wrap
+  changeColor(0.7, 0.7, 0.1);
+  DrawPresentBow();
+  DrawPresentWrap();
+  modelViewMatrix = modelViewStack.pop();
+
+  // draw another present
+  modelViewStack.push(modelViewMatrix);
+  modelViewMatrix = mult(modelViewMatrix, translate(4.3, 0.25, 2.9));
+  modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
+  // blue box
+  changeColor(0.1, 1, 0.1);
+  DrawSolidCube(1);
+  // yellow bow and wrap
+  changeColor(0.7, 0.1, 0.7);
+  DrawPresentBow();
+  DrawPresentWrap();
   modelViewMatrix = modelViewStack.pop();
 
   // draw house
