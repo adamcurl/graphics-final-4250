@@ -30,6 +30,40 @@ function quad(a, b, c, d) {
   numVertices += 6;
 }
 
+function textureQuad(a, b, c, d) {
+  var t1 = subtract(vertices[b], vertices[a]);
+  var t2 = subtract(vertices[c], vertices[b]);
+  var normal = cross(t1, t2);
+  var normal = vec3(normal);
+  normal = normalize(normal);
+
+  pointsArray.push(vertices[a]);
+  normalsArray.push(normal);
+  texCoordsArray.push(texCoord[0]);
+
+  pointsArray.push(vertices[b]);
+  normalsArray.push(normal);
+  texCoordsArray.push(texCoord[1]);
+
+  pointsArray.push(vertices[c]);
+  normalsArray.push(normal);
+  texCoordsArray.push(texCoord[2]);
+
+  pointsArray.push(vertices[a]);
+  normalsArray.push(normal);
+  texCoordsArray.push(texCoord[0]);
+
+  pointsArray.push(vertices[c]);
+  normalsArray.push(normal);
+  texCoordsArray.push(texCoord[2]);
+
+  pointsArray.push(vertices[d]);
+  normalsArray.push(normal);
+  texCoordsArray.push(texCoord[3]);
+
+  numVertices += 6;
+}
+
 function quadAlt(a, b, c, d) {
   var points = [a, b, c, d];
   var normal = Newell(points);
@@ -343,4 +377,33 @@ function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+
+function loadTexture(texture) {
+  // Flip the image's y axis
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+  // Enable texture unit 0
+  gl.activeTexture(gl.TEXTURE0);
+
+  // bind the texture object to the target
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // set the texture image
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    gl.RGB,
+    gl.RGB,
+    gl.UNSIGNED_BYTE,
+    texture.image
+  );
+
+  // set the texture parameters
+  //gl.generateMipmap( gl.TEXTURE_2D );
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  // set the texture unit 0 the sampler
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 }

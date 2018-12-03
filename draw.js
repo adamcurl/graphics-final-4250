@@ -70,18 +70,6 @@ function DrawPrism() {
   gl.drawArrays(gl.TRIANGLES, wrapPointEnd, prismPointEnd - wrapPointEnd);
 }
 
-function DrawPresent() {
-  // red box
-  changeColor(1, 0.1, 0.1);
-
-  DrawSolidCube(1);
-  // green bow and wrap
-  changeColor(0.1, 0.7, 0.1);
-
-  DrawPresentBow();
-  DrawPresentWrap();
-}
-
 function DrawHouse() {
   // draw house body
   changeColor(1, 0.7, 0.5);
