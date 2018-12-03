@@ -378,32 +378,3 @@ function getRandomInt(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
-
-function loadTexture(texture) {
-  // Flip the image's y axis
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
-  // Enable texture unit 0
-  gl.activeTexture(gl.TEXTURE0);
-
-  // bind the texture object to the target
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-
-  // set the texture image
-  gl.texImage2D(
-    gl.TEXTURE_2D,
-    0,
-    gl.RGB,
-    gl.RGB,
-    gl.UNSIGNED_BYTE,
-    texture.image
-  );
-
-  // set the texture parameters
-  //gl.generateMipmap( gl.TEXTURE_2D );
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
-  // set the texture unit 0 the sampler
-  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
-}
