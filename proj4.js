@@ -61,12 +61,6 @@ var cubeCount = 36;
 var sphereCount = 0;
 var numTimesToSubdivide = 5;
 
-// texture vars
-var image;
-var texCoordsArray = [];
-var texture;
-var texCoord = [vec2(0, 0), vec2(0, 1), vec2(1, 1), vec2(1, 0)];
-
 //animation
 var makeItSnow = false;
 var count = 0;
@@ -245,23 +239,6 @@ window.onload = function init() {
   };
 
   window.onkeydown = HandleKeyboard;
-
-  // ==============  Establish Textures =================
-  // create the texture object
-  // texture = gl.createTexture();
-
-  // // create the image object
-  // texture.image = new Image();
-
-  // // register the event handler to be called on loading an image
-  // texture.image.onload = function() {
-  //   loadTexture(texture);
-  // };
-
-  // texture.image.crossOrigin = "anonymous";
-
-  // // Tell the broswer to load an image
-  // texture.image.src = "wrapping_paper.jpg";
 
   render();
 };
