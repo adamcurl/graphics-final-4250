@@ -407,38 +407,6 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
-// Load a new texture
-// function loadNewTexture(whichTex) {
-//   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-
-//   gl.activeTexture(gl.TEXTURE0 + whichTex);
-//   gl.bindTexture(gl.TEXTURE_2D, textures[whichTex]);
-
-//   gl.texImage2D(
-//     gl.TEXTURE_2D,
-//     0,
-//     gl.RGB,
-//     gl.RGB,
-//     gl.UNSIGNED_BYTE,
-//     textures[whichTex].image
-//   );
-//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-// }
-
-// // Setup the new image object prior to loading to the shaders
-// function openNewTexture(imageSRC) {
-//   var i = textures.length;
-//   textures[i] = gl.createTexture();
-//   textures[i].image = new Image();
-
-//   textures[i].image.onload = function() {
-//     loadNewTexture(i);
-//   };
-//   textures[i].image.crossOrigin = "Anonymous"; // Added to prevent the cross-origin issue
-//   textures[i].image.src = imageSRC;
-// }
-
 function loadTexture(texture, whichTexture) {
   // Flip the image's y axis
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -588,7 +556,7 @@ function EstablishTextures() {
   texture9.image = new Image();
 
   // Tell the broswer to load an image
-  texture9.image.src = "snow.jpg";
+  texture9.image.src = "snow.png";
 
   // register the event handler to be called on loading an image
   texture9.image.onload = function() {

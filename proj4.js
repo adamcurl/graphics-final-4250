@@ -151,6 +151,8 @@ window.onload = function init() {
   GenerateNose(0.08, 0.45);
   GenerateTreePoints();
   GenerateStar();
+  GenerateHat();
+  GenerateArmsAndButtons();
 
   // add sound
   sounds.push(new Audio("jingle_bells.mp3"));
@@ -444,6 +446,16 @@ var render = function() {
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawStar();
   modelViewMatrix = modelViewStack.pop(); //POP
+
+  //draw hat
+  modelViewStack.push(modelViewMatrix);
+  modelViewMatrix = mult(modelViewMatrix, translate(2, 2.5, 6));
+  modelViewMatrix = mult(modelViewMatrix, scale4(0.2, 0.2, 0.2));
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawHat();
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  DrawArmsAndButtons();
 
   // draw lights, lights animation checkpoint
   if (animating) {

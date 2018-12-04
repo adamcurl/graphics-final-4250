@@ -443,3 +443,47 @@ function DrawSnow() {
     modelViewMatrix = modelViewStack.pop(); //POP
   }
 }
+
+function DrawHat() {
+  changeColor(0.12, 0.1, 0.1);
+  modelViewStack.push(modelViewMatrix); //PUSH
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  gl.drawArrays(gl.TRIANGLES, treePointEnd + 24, 132);
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  modelViewStack.push(modelViewMatrix); //PUSH
+  r = rotate(180, 0, 1, 0);
+  modelViewMatrix = mult(modelViewMatrix, r);
+
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  gl.drawArrays(gl.TRIANGLES, treePointEnd + 24, 132);
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  modelViewStack.push(modelViewMatrix);
+  s = scale4(2, 0.2, 2);
+  modelViewMatrix = mult(modelViewMatrix, s);
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawSolidSphere(1.3);
+  modelViewMatrix = modelViewStack.pop(); //POP
+}
+
+function DrawArmsAndButtons() {
+  // change color of object
+  changeColor(0.6, 0.2, 0.1);
+  modelViewStack.push(modelViewMatrix); //PUSH
+  s = scale4(0.05, 0.05, 1);
+  t = translate(1, 1.5, 6);
+  r = rotate(180, 1, 0, 1);
+  modelViewMatrix = mult(modelViewMatrix, t);
+  modelViewMatrix = mult(modelViewMatrix, r);
+  modelViewMatrix = mult(modelViewMatrix, s);
+  r = rotate(45, 1, 0, 0);
+  modelViewMatrix = mult(modelViewMatrix, r);
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  gl.drawArrays(
+    gl.TRIANGLES,
+    spherePointsEnd,
+    mailBoxPointEnd - spherePointsEnd
+  );
+  modelViewMatrix = modelViewStack.pop(); //POP
+}
