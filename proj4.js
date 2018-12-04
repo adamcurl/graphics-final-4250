@@ -34,6 +34,15 @@ var materialShininess = 50.0;
 var textureCoordsArray = []; // textures array
 var textures = [];
 var textureCoord = [vec2(0, 0), vec2(0, 1), vec2(1, 1), vec2(1, 0)];
+var texture1,
+  texture2,
+  texture3,
+  texture4,
+  texture5,
+  texture6,
+  texture7,
+  texture8,
+  texture9;
 
 // color
 var ctm;
@@ -142,6 +151,8 @@ window.onload = function init() {
   GenerateNose(0.08, 0.45);
   GenerateTreePoints();
   GenerateStar();
+  GenerateHat();
+  GenerateArmsAndButtons();
 
   // add sound
   sounds.push(new Audio("jingle_bells.mp3"));
@@ -176,6 +187,7 @@ window.onload = function init() {
   // set up matrices
   modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
   projectionMatrixLoc = gl.getUniformLocation(program, "projectionMatrix");
+  textureLoc = gl.getUniformLocation(program, "texture");
 
   // Light
   ambientProduct = mult(lightAmbient, materialAmbient);
@@ -245,8 +257,9 @@ window.onload = function init() {
   };
 
   // Load Textures.
-  openNewTexture("white.jpg");
-  openNewTexture("wrapping_paper.jpg");
+  // openNewTexture("white.jpg");
+  // openNewTexture("wrapping_paper.jpg");
+  EstablishTextures();
 
   window.onkeydown = HandleKeyboard;
 
@@ -324,7 +337,7 @@ var render = function() {
 
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
-  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
+  gl.uniform1i(textureLoc, 0);
 
   // draw walls
   DrawEnvironment();
@@ -334,7 +347,7 @@ var render = function() {
   modelViewMatrix = mult(modelViewMatrix, translate(6, 0.25, 1));
   modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
   // red box
-  changeColor(1, 0.1, 0.1);
+  changeColor(1, 1, 1);
   gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
   DrawSolidCube(1);
   gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
@@ -349,7 +362,7 @@ var render = function() {
   modelViewMatrix = mult(modelViewMatrix, translate(5.7, 0.25, 2.3));
   modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
   // blue box
-  changeColor(0.1, 0.1, 1);
+  changeColor(1, 1, 1);
   gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
   DrawSolidCube(1);
   gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
@@ -364,7 +377,7 @@ var render = function() {
   modelViewMatrix = mult(modelViewMatrix, translate(4.3, 0.25, 2.9));
   modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
   // blue box
-  changeColor(0.1, 1, 0.1);
+  changeColor(1, 1, 1);
   gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
   DrawSolidCube(1);
   gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
@@ -433,6 +446,16 @@ var render = function() {
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawStar();
   modelViewMatrix = modelViewStack.pop(); //POP
+
+  //draw hat
+  modelViewStack.push(modelViewMatrix);
+  modelViewMatrix = mult(modelViewMatrix, translate(2, 2.5, 6));
+  modelViewMatrix = mult(modelViewMatrix, scale4(0.2, 0.2, 0.2));
+  gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  DrawHat();
+  modelViewMatrix = modelViewStack.pop(); //POP
+
+  DrawArmsAndButtons();
 
   // draw lights, lights animation checkpoint
   if (animating) {
