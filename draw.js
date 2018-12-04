@@ -72,8 +72,9 @@ function DrawPrism() {
 
 function DrawHouse() {
   // draw house body
-  changeColor(1, 0.7, 0.5);
+  changeColor(1, 1, 1);
 
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 2);
   modelViewStack.push(modelViewMatrix);
   modelViewMatrix = mult(modelViewMatrix, translate(2, 1.02, 3));
   modelViewMatrix = mult(modelViewMatrix, scale4(2, 2, 3));
@@ -85,9 +86,11 @@ function DrawHouse() {
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawPrism();
   modelViewMatrix = modelViewStack.pop();
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 
   // draw roof
-  changeColor(1, 0, 0);
+  changeColor(1, 1, 1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 3);
 
   modelViewStack.push(modelViewMatrix);
   modelViewMatrix = mult(modelViewMatrix, translate(1.3, 2.35, 3));
@@ -103,9 +106,11 @@ function DrawHouse() {
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawSolidCube(1);
   modelViewMatrix = modelViewStack.pop();
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 
   // draw door
-  changeColor(0.6, 0.4, 0.2);
+  changeColor(1, 1, 1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 4);
 
   modelViewStack.push(modelViewMatrix);
   modelViewMatrix = mult(modelViewMatrix, translate(1.5, 0.02, 4.55));
@@ -114,9 +119,11 @@ function DrawHouse() {
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawWall(0.02);
   modelViewMatrix = modelViewStack.pop();
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 
   // draw window
   changeColor(1, 1, 1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 6);
 
   modelViewStack.push(modelViewMatrix);
   modelViewMatrix = mult(modelViewMatrix, translate(3.01, 0.5, 2));
@@ -125,10 +132,12 @@ function DrawHouse() {
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
   DrawWall(0.02);
   modelViewMatrix = modelViewStack.pop();
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 }
 
 function DrawEnvironment() {
-  changeColor(0.1, 0.1, 0.6);
+  changeColor(1, 1, 1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 8);
 
   // wall # 1: in xz-plane
   modelViewStack.push(modelViewMatrix);
@@ -136,6 +145,7 @@ function DrawEnvironment() {
   DrawWall(0.02);
   modelViewMatrix = modelViewStack.pop();
 
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 7);
   // wall #2: in yz-plane
   modelViewStack.push(modelViewMatrix);
   modelViewMatrix = mult(modelViewMatrix, rotate(90.0, 0.0, 0.0, 1.0));
@@ -149,6 +159,7 @@ function DrawEnvironment() {
   modelViewMatrix = mult(modelViewMatrix, scale4(7, 1, 4));
   DrawWall(0.02);
   modelViewMatrix = modelViewStack.pop();
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 }
 
 function DrawSnowmanBody() {
@@ -315,8 +326,11 @@ function DrawFace() {
 
 function DrawTree() {
   // change color of object
-  changeColor(0, 0.6, 0);
+  changeColor(1, 1, 1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 5);
+
   gl.drawArrays(gl.TRIANGLES, nosePointEnd, 6 * 24 * 24);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 }
 
 function DrawAlphaLights() {

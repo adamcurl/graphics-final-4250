@@ -408,33 +408,190 @@ function getRandomInt(min, max) {
 }
 
 // Load a new texture
-function loadNewTexture(whichTex) {
+// function loadNewTexture(whichTex) {
+//   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+//   gl.activeTexture(gl.TEXTURE0 + whichTex);
+//   gl.bindTexture(gl.TEXTURE_2D, textures[whichTex]);
+
+//   gl.texImage2D(
+//     gl.TEXTURE_2D,
+//     0,
+//     gl.RGB,
+//     gl.RGB,
+//     gl.UNSIGNED_BYTE,
+//     textures[whichTex].image
+//   );
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+// }
+
+// // Setup the new image object prior to loading to the shaders
+// function openNewTexture(imageSRC) {
+//   var i = textures.length;
+//   textures[i] = gl.createTexture();
+//   textures[i].image = new Image();
+
+//   textures[i].image.onload = function() {
+//     loadNewTexture(i);
+//   };
+//   textures[i].image.crossOrigin = "Anonymous"; // Added to prevent the cross-origin issue
+//   textures[i].image.src = imageSRC;
+// }
+
+function loadTexture(texture, whichTexture) {
+  // Flip the image's y axis
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
-  gl.activeTexture(gl.TEXTURE0 + whichTex);
-  gl.bindTexture(gl.TEXTURE_2D, textures[whichTex]);
+  // Enable texture unit 1
+  gl.activeTexture(whichTexture);
 
+  // bind the texture object to the target
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+
+  // set the texture image
   gl.texImage2D(
     gl.TEXTURE_2D,
     0,
     gl.RGB,
     gl.RGB,
     gl.UNSIGNED_BYTE,
-    textures[whichTex].image
+    texture.image
   );
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+  // version 1 (combination needed for images that are not powers of 2
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+
+  // set the texture parameters
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 }
 
-// Setup the new image object prior to loading to the shaders
-function openNewTexture(imageSRC) {
-  var i = textures.length;
-  textures[i] = gl.createTexture();
-  textures[i].image = new Image();
+function EstablishTextures() {
+  // --------create texture object 1----------
+  texture1 = gl.createTexture();
 
-  textures[i].image.onload = function() {
-    loadNewTexture(i);
+  // create the image object
+  texture1.image = new Image();
+
+  // Tell the broswer to load an image
+  texture1.image.src = "white.jpg";
+
+  // register the event handler to be called on loading an image
+  texture1.image.onload = function() {
+    loadTexture(texture1, gl.TEXTURE0);
   };
-  textures[i].image.crossOrigin = "Anonymous"; // Added to prevent the cross-origin issue
-  textures[i].image.src = imageSRC;
+
+  // -------create texture object 2------------
+  texture2 = gl.createTexture();
+
+  // create the image object
+  texture2.image = new Image();
+
+  // Tell the broswer to load an image
+  texture2.image.src = "wrapping_paper.jpg";
+
+  // register the event handler to be called on loading an image
+  texture2.image.onload = function() {
+    loadTexture(texture2, gl.TEXTURE1);
+  };
+
+  // -------create texture object 3------------
+  texture3 = gl.createTexture();
+
+  // create the image object
+  texture3.image = new Image();
+
+  // Tell the broswer to load an image
+  texture3.image.src = "log.jpg";
+
+  // register the event handler to be called on loading an image
+  texture3.image.onload = function() {
+    loadTexture(texture3, gl.TEXTURE2);
+  };
+
+  // -------create texture object 4------------
+  texture4 = gl.createTexture();
+
+  // create the image object
+  texture4.image = new Image();
+
+  // Tell the broswer to load an image
+  texture4.image.src = "roof.jpg";
+
+  // register the event handler to be called on loading an image
+  texture4.image.onload = function() {
+    loadTexture(texture4, gl.TEXTURE3);
+  };
+
+  // -------create texture object 5------------
+  texture5 = gl.createTexture();
+
+  // create the image object
+  texture5.image = new Image();
+
+  // Tell the broswer to load an image
+  texture5.image.src = "door.jpg";
+
+  // register the event handler to be called on loading an image
+  texture5.image.onload = function() {
+    loadTexture(texture5, gl.TEXTURE4);
+  };
+
+  // -------create texture object 6------------
+  texture6 = gl.createTexture();
+
+  // create the image object
+  texture6.image = new Image();
+
+  // Tell the broswer to load an image
+  texture6.image.src = "tree.jpg";
+
+  // register the event handler to be called on loading an image
+  texture6.image.onload = function() {
+    loadTexture(texture6, gl.TEXTURE5);
+  };
+
+  // -------create texture object 7------------
+  texture7 = gl.createTexture();
+
+  // create the image object
+  texture7.image = new Image();
+
+  // Tell the broswer to load an image
+  texture7.image.src = "window.jpg";
+
+  // register the event handler to be called on loading an image
+  texture7.image.onload = function() {
+    loadTexture(texture7, gl.TEXTURE6);
+  };
+
+  // -------create texture object 7------------
+  texture8 = gl.createTexture();
+
+  // create the image object
+  texture8.image = new Image();
+
+  // Tell the broswer to load an image
+  texture8.image.src = "sky.jpg";
+
+  // register the event handler to be called on loading an image
+  texture8.image.onload = function() {
+    loadTexture(texture8, gl.TEXTURE7);
+  };
+
+  // -------create texture object 8------------
+  texture9 = gl.createTexture();
+
+  // create the image object
+  texture9.image = new Image();
+
+  // Tell the broswer to load an image
+  texture9.image.src = "snow.jpg";
+
+  // register the event handler to be called on loading an image
+  texture9.image.onload = function() {
+    loadTexture(texture9, gl.TEXTURE8);
+  };
 }
