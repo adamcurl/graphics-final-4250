@@ -16,50 +16,27 @@ function quad(a, b, c, d) {
 
   pointsArray.push(vertices[a]);
   normalsArray.push(normal);
-  pointsArray.push(vertices[b]);
-  normalsArray.push(normal);
-  pointsArray.push(vertices[c]);
-  normalsArray.push(normal);
-  pointsArray.push(vertices[a]);
-  normalsArray.push(normal);
-  pointsArray.push(vertices[c]);
-  normalsArray.push(normal);
-  pointsArray.push(vertices[d]);
-  normalsArray.push(normal);
-
-  numVertices += 6;
-}
-
-function textureQuad(a, b, c, d) {
-  var t1 = subtract(vertices[b], vertices[a]);
-  var t2 = subtract(vertices[c], vertices[b]);
-  var normal = cross(t1, t2);
-  var normal = vec3(normal);
-  normal = normalize(normal);
-
-  pointsArray.push(vertices[a]);
-  normalsArray.push(normal);
-  texCoordsArray.push(texCoord[0]);
+  textureCoordsArray.push(textureCoord[0]);
 
   pointsArray.push(vertices[b]);
   normalsArray.push(normal);
-  texCoordsArray.push(texCoord[1]);
+  textureCoordsArray.push(textureCoord[1]);
 
   pointsArray.push(vertices[c]);
   normalsArray.push(normal);
-  texCoordsArray.push(texCoord[2]);
+  textureCoordsArray.push(textureCoord[2]);
 
   pointsArray.push(vertices[a]);
   normalsArray.push(normal);
-  texCoordsArray.push(texCoord[0]);
+  textureCoordsArray.push(textureCoord[0]);
 
   pointsArray.push(vertices[c]);
   normalsArray.push(normal);
-  texCoordsArray.push(texCoord[2]);
+  textureCoordsArray.push(textureCoord[2]);
 
   pointsArray.push(vertices[d]);
   normalsArray.push(normal);
-  texCoordsArray.push(texCoord[3]);
+  textureCoordsArray.push(textureCoord[3]);
 
   numVertices += 6;
 }
@@ -71,18 +48,28 @@ function quadAlt(a, b, c, d) {
   // triangle abc
   pointsArray.push(a);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
+
   pointsArray.push(b);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[1]);
+
   pointsArray.push(c);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[2]);
 
   // triangle acd
   pointsArray.push(a);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
+
   pointsArray.push(c);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[2]);
+
   pointsArray.push(d);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[3]);
 
   numVertices += 6;
 }
@@ -96,14 +83,23 @@ function tri(a, b, c) {
 
   pointsArray.push(vertices[a]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
+
   pointsArray.push(vertices[b]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[1]);
+
   pointsArray.push(vertices[c]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[2]);
+
   pointsArray.push(vertices[a]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
+
   pointsArray.push(vertices[c]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[2]);
 
   numVertices += 5;
 }
@@ -117,24 +113,39 @@ function pentagon(a, b, c, d, e) {
 
   pointsArray.push(vertices[a]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
+
   pointsArray.push(vertices[b]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[1]);
+
   pointsArray.push(vertices[c]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[2]);
 
   pointsArray.push(vertices[a]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
+
   pointsArray.push(vertices[c]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[2]);
+
   pointsArray.push(vertices[d]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[3]);
 
   pointsArray.push(vertices[a]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
+
   pointsArray.push(vertices[d]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[3]);
+
   pointsArray.push(vertices[e]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
 
   numVertices += 9;
 }
@@ -170,8 +181,11 @@ function triangle(a, b, c) {
   normalsArray.push(vec3(c[0], c[1], c[2]));
 
   pointsArray.push(a);
+  textureCoordsArray.push(vec2(0.5, 0));
   pointsArray.push(b);
+  textureCoordsArray.push(vec2(1, 1));
   pointsArray.push(c);
+  textureCoordsArray.push(vec2(0, 1));
 
   sphereCount += 3;
   numVertices += 3;
@@ -184,10 +198,15 @@ function triangleAlt(a, b, c) {
   // triangle abc
   pointsArray.push(a);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
+
   pointsArray.push(b);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[1]);
+
   pointsArray.push(c);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[2]);
 
   numVertices += 3;
 }
@@ -236,22 +255,28 @@ function surfaceQuad(a, b, c, d) {
   // triangle a-b-c
   pointsArray.push(surfaceVertices[a]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
 
   pointsArray.push(surfaceVertices[b]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[1]);
 
   pointsArray.push(surfaceVertices[c]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[2]);
 
   // triangle a-c-d
   pointsArray.push(surfaceVertices[a]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[0]);
 
   pointsArray.push(surfaceVertices[c]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[2]);
 
   pointsArray.push(surfaceVertices[d]);
   normalsArray.push(normal);
+  textureCoordsArray.push(textureCoord[3]);
 
   numVertices += 6;
 }
@@ -331,12 +356,15 @@ function polygon(indices) {
   for (var i = 0; i < M - 2; i++) {
     pointsArray.push(vertices[indices[0]]);
     normalsArray.push(normal);
+    textureCoordsArray.push(textureCoord[0]);
 
     pointsArray.push(vertices[indices[prev]]);
     normalsArray.push(normal);
+    textureCoordsArray.push(textureCoord[1]);
 
     pointsArray.push(vertices[indices[next]]);
     normalsArray.push(normal);
+    textureCoordsArray.push(textureCoord[2]);
 
     prev = next;
     next = next + 1;
@@ -377,4 +405,36 @@ function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+
+// Load a new texture
+function loadNewTexture(whichTex) {
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+  gl.activeTexture(gl.TEXTURE0 + whichTex);
+  gl.bindTexture(gl.TEXTURE_2D, textures[whichTex]);
+
+  gl.texImage2D(
+    gl.TEXTURE_2D,
+    0,
+    gl.RGB,
+    gl.RGB,
+    gl.UNSIGNED_BYTE,
+    textures[whichTex].image
+  );
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+}
+
+// Setup the new image object prior to loading to the shaders
+function openNewTexture(imageSRC) {
+  var i = textures.length;
+  textures[i] = gl.createTexture();
+  textures[i].image = new Image();
+
+  textures[i].image.onload = function() {
+    loadNewTexture(i);
+  };
+  textures[i].image.crossOrigin = "Anonymous"; // Added to prevent the cross-origin issue
+  textures[i].image.src = imageSRC;
 }
