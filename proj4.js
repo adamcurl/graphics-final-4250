@@ -30,6 +30,11 @@ var materialDiffuse = vec4(1.0, 0.1, 0.1, 1.0);
 var materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
 var materialShininess = 50.0;
 
+// textures
+var textureCoordsArray = []; // textures array
+var textures = [];
+var textureCoord = [vec2(0, 0), vec2(0, 1), vec2(1, 1), vec2(1, 0)];
+
 // color
 var ctm;
 var ambientColor, diffuseColor, specularColor;
@@ -151,6 +156,15 @@ window.onload = function init() {
   gl.vertexAttribPointer(vNormal, 3, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vNormal);
 
+  // Textures
+  var textureBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, flatten(textureCoordsArray), gl.STATIC_DRAW);
+
+  var vTextureCoord = gl.getAttribLocation(program, "vTextureCoord");
+  gl.vertexAttribPointer(vTextureCoord, 2, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(vTextureCoord);
+
   var vBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, flatten(pointsArray), gl.STATIC_DRAW);
@@ -158,14 +172,6 @@ window.onload = function init() {
   var vPosition = gl.getAttribLocation(program, "vPosition");
   gl.vertexAttribPointer(vPosition, 4, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(vPosition);
-
-  // var tBuffer = gl.createBuffer();
-  // gl.bindBuffer(gl.ARRAY_BUFFER, tBuffer);
-  // gl.bufferData(gl.ARRAY_BUFFER, flatten(texCoordsArray), gl.STATIC_DRAW);
-
-  // var vTexCoord = gl.getAttribLocation(program, "vTexCoord");
-  // gl.vertexAttribPointer(vTexCoord, 2, gl.FLOAT, false, 0, 0);
-  // gl.enableVertexAttribArray(vTexCoord);
 
   // set up matrices
   modelViewMatrixLoc = gl.getUniformLocation(program, "modelViewMatrix");
@@ -237,6 +243,9 @@ window.onload = function init() {
     translateFactorY -= 0.1;
     render();
   };
+
+  // Load Textures.
+  openNewTexture("white.jpg");
 
   window.onkeydown = HandleKeyboard;
 
@@ -314,6 +323,7 @@ var render = function() {
 
   gl.uniformMatrix4fv(projectionMatrixLoc, false, flatten(projectionMatrix));
   gl.uniformMatrix4fv(modelViewMatrixLoc, false, flatten(modelViewMatrix));
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
 
   // draw walls
   DrawEnvironment();
