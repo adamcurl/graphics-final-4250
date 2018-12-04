@@ -246,6 +246,7 @@ window.onload = function init() {
 
   // Load Textures.
   openNewTexture("white.jpg");
+  openNewTexture("wrapping_paper.jpg");
 
   window.onkeydown = HandleKeyboard;
 
@@ -334,7 +335,9 @@ var render = function() {
   modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
   // red box
   changeColor(1, 0.1, 0.1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
   DrawSolidCube(1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
   // green bow and wrap
   changeColor(0.1, 0.7, 0.1);
   DrawPresentBow();
@@ -347,7 +350,9 @@ var render = function() {
   modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
   // blue box
   changeColor(0.1, 0.1, 1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
   DrawSolidCube(1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
   // yellow bow and wrap
   changeColor(0.7, 0.7, 0.1);
   DrawPresentBow();
@@ -360,7 +365,9 @@ var render = function() {
   modelViewMatrix = mult(modelViewMatrix, scale4(0.5, 0.5, 0.5));
   // blue box
   changeColor(0.1, 1, 0.1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 1);
   DrawSolidCube(1);
+  gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);
   // yellow bow and wrap
   changeColor(0.7, 0.1, 0.7);
   DrawPresentBow();
