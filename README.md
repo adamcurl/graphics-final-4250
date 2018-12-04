@@ -1,4 +1,4 @@
-Computer Grahpics 4250 Final Project by Martina Nikic and Adam Curl
+Computer Graphics 4250 Final Project by Martina Nikic and Adam Curl
 
 Files:
 
